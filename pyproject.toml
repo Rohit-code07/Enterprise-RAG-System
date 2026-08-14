@@ -1,0 +1,22 @@
+[project]
+name = "coursemate-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "rohit verma", email = "rohitgcode20@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "huggingface-hub>=1.27.0",
+    "langchain-huggingface>=1.2.2",
+    "sentence-transformers>=5.7.0",
+    "streamlit>=1.61.1",
+]
+
+[project.scripts]
+coursemate-ai = "coursemate_ai:main"
+
+[build-system]
+requires = ["uv_build>=0.12.1,<0.13.0"]
+build-backend = "uv_build"

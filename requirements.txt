@@ -1,0 +1,48 @@
+# Core LangChain / RAG
+
+langchain
+langchain-core
+langchain-community
+langchain-openai
+langchain-mistralai
+langchain-chroma
+
+# LangGraph
+
+langgraph
+
+# Vector Database
+
+chromadb
+
+# LLM SDKs
+
+openai
+mistralai
+
+# Document Processing
+
+pypdf
+python-docx
+openpyxl
+beautifulsoup4
+lxml
+
+# Environment Variables
+
+python-dotenv
+
+# API / Backend
+
+fastapi
+uvicorn
+pydantic
+pydantic-settings
+
+# HTTP / Async
+
+httpx
+
+# Production Utilities
+
+tenacity
