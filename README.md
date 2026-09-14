@@ -1,132 +1,113 @@
-# 📚 CourseMate AI
+# CourseMate AI 🎓🤖
 
-CourseMate AI is a strict RAG (Retrieval-Augmented Generation) course assistant.
-Upload your course PDFs, and ask questions — answers are generated **only** from
-the content you've uploaded, with no outside knowledge or hallucination.
+CourseMate AI is a production-grade **Retrieval-Augmented Generation (RAG)** application designed to help students and professionals interactively chat with their course materials, presentations (PPTs), and PDFs. 
 
-Built with **Streamlit**, **LangChain**, **Mistral AI**, **HuggingFace embeddings**,
-and **Chroma** as the vector store.
+Built with a **FastAPI** backend and a **React + Tailwind CSS** frontend, the system relies strictly on uploaded documents to answer questions, entirely preventing LLM hallucinations.
 
 ---
 
-## ✨ Features
-
-- 📄 Upload one or more PDFs directly from the browser
-- 🔍 Automatic chunking + embedding into a persistent Chroma vector database
-- 💬 Chat interface with full conversation history
-- 🧠 MMR (Maximal Marginal Relevance) retrieval for diverse, relevant context
-- 📎 "Sources" panel under each answer showing exactly which chunks (file + page)
-  were used
-- 🚫 Refuses to answer when the material doesn't contain the answer, instead of guessing
+## 🌟 Key Features
+- **Strict Grounding:** The AI is strictly prompt-engineered and architecture-bound to *only* answer using the uploaded context. If the answer isn't there, it will tell you!
+- **Configurable Chunking:** Customize the `chunk_size` and `chunk_overlap` directly from the UI before indexing to optimize for different document structures.
+- **Preview Chunks:** Visually inspect how your document is split before committing to the expensive embedding and indexing process.
+- **MMR Retrieval:** Uses Maximal Marginal Relevance (MMR) to retrieve diverse but highly relevant context for the LLM.
+- **Multi-Provider LLM Support:** Seamlessly switch between **Gemini**, **Mistral**, and **OpenAI** by updating a single environment variable.
+- **Precise Citations:** Every response explicitly cites the source document and page number it derived the answer from.
 
 ---
 
-## 🗂️ Project Structure
+## 🏗️ Architecture & Workflow
 
+### RAG Pipeline Diagram
+```mermaid
+graph TD
+    A[User Uploads PDF/PPT] --> B[FastAPI Backend]
+    B --> C[PyPDFLoader extracts text]
+    C --> D[RecursiveCharacterTextSplitter]
+    
+    subgraph Indexing Phase
+        D -->|Configurable Size/Overlap| E[HuggingFace Embeddings]
+        E -->|all-mpnet-base-v2| F[(ChromaDB Vector Store)]
+    end
+
+    G[User Asks Question] --> H[Retrieval Service]
+    H -->|Fetch Top 20| F
+    F -->|Return chunks with L2 scores| H
+    H -->|Apply MMR | I[Top 5 Diverse Chunks]
+    
+    I --> J[LLM Service]
+    J -->|Strict Prompt Injection| K{LLM Provider: Gemini / Mistral / OpenAI}
+    K --> L[Grounded Answer + Citations]
+    L --> M[React Frontend UI]
 ```
-.
-├── app.py              # Streamlit app (upload + chat UI)
-├── requirements.txt    # Python dependencies
-├── chroma_db/          # Persistent vector store (created automatically)
-└── .env                # Your API keys (not committed)
-```
+
+### 1. Document Processing 
+When a user uploads a document, the text is extracted and split into chunks based on user-defined configurations. We use `sentence-transformers/all-mpnet-base-v2` (running locally) to generate embeddings for these chunks, which are then persisted in a local ChromaDB database.
+
+### 2. Retrieval & MMR
+When a question is asked, the system fetches the top 20 most semantically similar chunks. It then applies **Maximal Marginal Relevance (MMR)** to select the 5 most diverse chunks, ensuring the LLM gets a broad but highly accurate context window.
+
+### 3. Answer Generation
+The chunks are fed into the configured LLM (e.g., Gemini 3.6 Flash) along with a strict system prompt. The LLM synthesizes the answer and the backend attaches source metadata (File name and Page number) to the response for the frontend to display.
 
 ---
 
-## ⚙️ Setup
+## 🚀 Getting Started
 
-### 1. Clone / copy the project files
+### Prerequisites
+- Python 3.10+
+- Node.js & npm
 
-Make sure `app.py` and `requirements.txt` are in the same folder.
-
-### 2. Create a virtual environment (recommended)
+### 1. Backend Setup (FastAPI)
+Navigate to the backend directory and set up your virtual environment:
 
 ```bash
-python -m venv venv
-venv\Scripts\activate      # Windows
-source venv/bin/activate   # macOS/Linux
-```
+cd "Ai service"
+python -m venv .venv
+.\.venv\Scripts\activate  # On Windows
+# source .venv/bin/activate # On macOS/Linux
 
-### 3. Install dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-### 4. Add your API key
-
-Create a `.env` file in the project root:
-
+**Environment Variables:**
+Create a `.env` file inside the `Ai service` folder:
+```env
+LLM_PROVIDER=gemini  # Options: gemini, mistral, openai
+GEMINI_API_KEY=your_gemini_api_key_here
+# MISTRAL_API_KEY=your_mistral_api_key_here
+# OPENAI_API_KEY=your_openai_api_key_here
 ```
-MISTRAL_API_KEY=your_mistral_api_key_here
+
+**Run the Backend:**
+```bash
+python -m uvicorn api:app --reload --port 8000
 ```
+*Note: The first run may take a moment as it downloads the HuggingFace embedding model locally.*
 
-> Get a key from [console.mistral.ai](https://console.mistral.ai/).
-
-### 5. Run the app
+### 2. Frontend Setup (React)
+Open a new terminal and navigate to the frontend directory:
 
 ```bash
-streamlit run app.py
+cd frontend
+npm install
 ```
 
-The app opens automatically at `http://localhost:8501`.
+**Run the Frontend:**
+```bash
+npm run dev
+```
 
----
-
-## 🚀 Usage
-
-1. Open the app in your browser.
-2. In the **sidebar**, upload one or more PDF files (e.g. lecture notes, textbooks).
-3. Adjust **chunk size** / **chunk overlap** if needed (defaults: 2000 / 300).
-4. Click **"Process & Add to Knowledge Base"** — this splits the PDF and stores
-   its embeddings in `chroma_db/`.
-5. Type a question in the chat box at the bottom of the main panel.
-6. Expand **Sources** under any answer to see which parts of the document were used.
-
-Uploaded documents persist across sessions since they're saved to `chroma_db/`
-on disk — you don't need to re-upload every time you restart the app.
-
----
-
-## 🧠 How it works
-
-1. **Ingestion**: `PyPDFLoader` extracts text from the PDF → `RecursiveCharacterTextSplitter`
-   splits it into overlapping chunks → `HuggingFaceEmbeddings`
-   (`sentence-transformers/all-mpnet-base-v2`) embeds each chunk → chunks are stored
-   in a local **Chroma** vector database.
-2. **Retrieval**: On each question, the retriever runs an **MMR search** (`k=4`,
-   `fetch_k=10`, `lambda_mult=0.5`) to fetch relevant, non-redundant chunks.
-3. **Generation**: The retrieved chunks are inserted into a strict system prompt
-   and sent to `mistral-small-2603` via `ChatMistralAI`, which is instructed to
-   answer **only** from the given context.
+The application will be available at `http://localhost:5174` (or `5173` depending on port availability).
 
 ---
 
 ## 🛠️ Tech Stack
-
-| Component        | Tool                                            |
-|-------------------|--------------------------------------------------|
-| UI                | Streamlit                                        |
-| LLM               | Mistral AI (`mistral-small-2603`)                |
-| Embeddings        | `sentence-transformers/all-mpnet-base-v2`        |
-| Vector store      | Chroma (persisted locally)                       |
-| PDF parsing       | `pypdf` via `PyPDFLoader`                        |
-| Orchestration     | LangChain                                        |
+**Frontend:** React, Vite, Tailwind CSS v4, Axios, React-Markdown, Lucide React  
+**Backend:** FastAPI, Pydantic, Uvicorn  
+**AI & RAG:** LangChain, ChromaDB, HuggingFace (`sentence-transformers`), Google GenAI / Mistral / OpenAI SDKs  
 
 ---
 
-## 📌 Notes / Troubleshooting
-
-- **No answer / "couldn't find the answer"**: Make sure you've uploaded and
-  processed a relevant PDF first — an empty `chroma_db` has no context to draw from.
-- **Slow first run**: The embedding model downloads on first use; subsequent
-  runs are faster and cached via `@st.cache_resource`.
-- **API errors**: Confirm `MISTRAL_API_KEY` is set correctly in `.env` and that
-  `.env` sits next to `app.py`.
-- **Resetting the knowledge base**: Delete the `chroma_db/` folder to start fresh.
-
----
-
-## 📄 License
-
-For personal/educational use. Adapt as needed for your own course material.
+## 📝 License
+This project is for educational and hackathon purposes.
