@@ -1,0 +1,16 @@
+.env
+.venv
+__pycache__/
+chroma_db/
+.github/
+.idea/
+.vscode/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/

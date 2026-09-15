@@ -1,6 +1,6 @@
-# CourseMate AI 🎓🤖
+# Enterprise RAG System 🎓🤖
 
-CourseMate AI is a production-grade **Retrieval-Augmented Generation (RAG)** application designed to help students and professionals interactively chat with their course materials, presentations (PPTs), and PDFs. 
+Enterprise RAG System is a production-grade **Retrieval-Augmented Generation (RAG)** application designed to help users interactively chat with their documents, presentations (PPTs), and PDFs. 
 
 Built with a **FastAPI** backend and a **React + Tailwind CSS** frontend, the system relies strictly on uploaded documents to answer questions, entirely preventing LLM hallucinations.
 

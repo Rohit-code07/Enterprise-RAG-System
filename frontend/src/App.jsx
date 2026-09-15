@@ -13,10 +13,10 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
-      <header className="bg-blue-800 text-white p-4 shadow-md">
+      <header className="bg-slate-800 text-white p-4 shadow-md">
         <div className="container mx-auto max-w-7xl flex items-center">
-          <h1 className="text-2xl font-bold tracking-tight">CourseMate AI</h1>
-          <span className="ml-4 text-blue-200 text-sm hidden md:inline">Strict Document-Grounded RAG</span>
+          <h1 className="text-2xl font-bold tracking-tight">Enterprise RAG System</h1>
+          <span className="ml-4 text-slate-300 text-sm hidden md:inline">Document-Grounded QA</span>
         </div>
       </header>
       

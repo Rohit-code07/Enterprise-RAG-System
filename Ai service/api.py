@@ -16,7 +16,7 @@ from services.exceptions import LLMProviderError
 
 logging.basicConfig(level=logging.INFO)
 
-app = FastAPI(title="CourseMate AI API", version="1.0.0")
+app = FastAPI(title="Enterprise RAG API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,

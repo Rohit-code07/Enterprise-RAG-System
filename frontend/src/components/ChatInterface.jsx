@@ -51,7 +51,7 @@ const ChatInterface = ({ selectedDocId }) => {
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 flex flex-col h-[800px]">
       <div className="p-4 border-b bg-gray-50 flex justify-between items-center rounded-t-lg">
-        <h2 className="text-xl font-bold">CourseMate Chat</h2>
+        <h2 className="text-xl font-bold">Document Chat</h2>
         {selectedDocId && (
           <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-semibold">
             Filtered by Document
@@ -62,8 +62,8 @@ const ChatInterface = ({ selectedDocId }) => {
       <div className="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-4">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 mt-10">
-            <p>Ask a question about your uploaded course materials.</p>
-            <p className="text-sm mt-2">Example: "What is virtual memory?"</p>
+            <p>Ask a question about your uploaded documents.</p>
+            <p className="text-sm mt-2">Example: "What are the key takeaways?"</p>
           </div>
         )}
         

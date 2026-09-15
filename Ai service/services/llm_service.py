@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 NOT_FOUND_MESSAGE = (
-    "I couldn't find the answer in the provided course material."
+    "I couldn't find the answer in the provided documents."
 )
 
 
