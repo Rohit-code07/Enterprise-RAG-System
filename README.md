@@ -19,27 +19,9 @@ Built with a **FastAPI** backend and a **React + Tailwind CSS** frontend, the sy
 ## 🏗️ Architecture & Workflow
 
 ### RAG Pipeline Diagram
-```mermaid
-graph TD
-    A[User Uploads PDF/PPT] --> B[FastAPI Backend]
-    B --> C[PyPDFLoader extracts text]
-    C --> D[RecursiveCharacterTextSplitter]
-    
-    subgraph Indexing Phase
-        D -->|Configurable Size/Overlap| E[HuggingFace Embeddings]
-        E -->|all-mpnet-base-v2| F[(ChromaDB Vector Store)]
-    end
+<img width="1224" height="1285" alt="Enterpirse Rag flow Chart" src="https://github.com/user-attachments/assets/3aae0c05-827e-47f7-93ae-a80063b61ed3" />
 
-    G[User Asks Question] --> H[Retrieval Service]
-    H -->|Fetch Top 20| F
-    F -->|Return chunks with L2 scores| H
-    H -->|Apply MMR | I[Top 5 Diverse Chunks]
-    
-    I --> J[LLM Service]
-    J -->|Strict Prompt Injection| K{LLM Provider: Gemini / Mistral / OpenAI}
-    K --> L[Grounded Answer + Citations]
-    L --> M[React Frontend UI]
-```
+
 
 ### 1. Document Processing 
 When a user uploads a document, the text is extracted and split into chunks based on user-defined configurations. We use `sentence-transformers/all-mpnet-base-v2` (running locally) to generate embeddings for these chunks, which are then persisted in a local ChromaDB database.
