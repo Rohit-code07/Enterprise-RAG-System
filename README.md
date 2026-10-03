@@ -19,7 +19,7 @@ Built with a **FastAPI** backend and a **React + Tailwind CSS** frontend, the sy
 ## 🏗️ Architecture & Workflow
 
 ### RAG Pipeline Diagram
-<img width="1224" height="1285" alt="Enterpirse Rag flow Chart" src="https://github.com/user-attachments/assets/3aae0c05-827e-47f7-93ae-a80063b61ed3" />
+<img width="2620" height="2180" alt="rag_flowchart_white" src="https://github.com/user-attachments/assets/51d51d78-2a68-4f72-9cbe-6ac79d016858" />
 
 
 
